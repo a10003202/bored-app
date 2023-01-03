@@ -1,12 +1,10 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 import Activity from './helpers/activity'
-import { ActivityStep } from './components/ActivityStep'
 import steps from './helpers/steps'
-import { ParticipantsStep } from './components/ParticipantsStep'
-import { CategoryStep } from './components/CategoryStep'
-import { PriceStep } from './components/PriceStep'
+import { Header } from './components/Header'
+import { Body } from './components/Body'
+import { Footer } from './components/Footer'
 
 function App() {
   const [formData, setFormData] = useState({
@@ -18,9 +16,9 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0)
 
   const Titles = [
-    '¿Que tipo de actividad quieres realizar?',
-    '¿Cuantos participantes son?',
-    '¿Cual es tu presupuesto para la actividad?',
+    'What kind of activity do you want to do?',
+    'How many participants are there?',
+    'What is your budget for the activity?',
   ]
 
   const handleSubmit = async () => {
@@ -28,49 +26,6 @@ function App() {
       console.log(response)
       setFormData({...formData, activity: response})
   };
-
-  const StepDisplay = (e) => {
-    switch(currentStep){
-      case steps.category:
-        return <CategoryStep formData={formData} setFormData={setFormData}/>
-      case steps.participants:
-        return <ParticipantsStep formData={formData} setFormData={setFormData}/>
-      case steps.price:
-        return <PriceStep formData={formData} setFormData={setFormData}/>
-      case steps.activity:
-        return <ActivityStep {...formData.activity}/>
-      default:
-        break;
-    }
-  }
-
-  const FooterDisplay = () => {
-    switch(currentStep){
-      case steps.activity:
-        return <div>
-        <button className="btn-primary-indigo m-2"
-          disabled={currentStep == 0} onClick={ restart }>
-          Buscar nueva actividad
-        </button>
-        <button className="btn-primary-indigo m-2"
-          onClick={ handleSubmit }>
-          Buscar otra actividad
-        </button>
-      </div>
-      default:
-        return <div>
-          <button disabled={currentStep == 0} onClick={ prevStep }
-            className="btn-primary m-2">
-              Anterior
-          </button>
-          <button onClick={ nextStep }
-            className="btn-primary m-2">
-            {currentStep == Titles.length - 1 ? 'Buscar' : 'Siguiente'}
-          </button>
-        </div>
-        break;
-    }
-  }
 
   const prevStep = () => {
     setCurrentStep( (step) => step - 1 )
@@ -95,18 +50,9 @@ function App() {
 
   return (
     <div className="App">
-      <div className="flex flex-col items-center justify-center m-4">
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <h1>{Titles[currentStep]}</h1>
-      </div>
-      <div className="m-4">
-        {StepDisplay()}
-      </div>
-      <div className="m-4">
-        {FooterDisplay()}
-      </div>
+      <Header Titles={Titles} currentStep={currentStep}/>
+      <Body currentStep={currentStep} formData={formData} setFormData={setFormData}/>
+      <Footer Titles={Titles} currentStep={currentStep} handleSubmit={handleSubmit} restart={restart} prevStep={prevStep} nextStep={nextStep}/>
     </div>
   )
 }
